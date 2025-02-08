@@ -1,13 +1,23 @@
-import express from "express";
-const app = express();
+import express, {Request, Response} from "express";
 import 'dotenv/config'
 
-const port = process.env.PORT;
+import {initChatOllama} from "./utils/ollama.js";
 
-app.get('/', (req: any, res: any) => {
-  res.send('Hello World!');
+const app = express();
+app.use(express.json());
+
+const port = process.env.PORT;
+const chatOllama = initChatOllama()
+
+app.post('/chat', async (req: Request, res: Response) => {
+    try {
+        const answer = await chatOllama.invoke(req.body.question);
+        res.json(answer);
+    } catch (error) {
+        res.status(500).json({error: (error as Error).message});
+    }
 });
 
 app.listen(port, () => {
-  return console.log(`Express is listening at http://localhost:${port}`);
+    return console.log(`Express is listening at http://localhost:${port}`);
 });

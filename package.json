@@ -16,7 +16,10 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
+    "@langchain/core": "^0.3.39",
+    "@langchain/ollama": "^0.1.5",
     "dotenv": "^16.4.7",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "ollama": "^0.4.4"
   }
 }
