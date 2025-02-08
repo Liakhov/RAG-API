@@ -1,18 +1,18 @@
 import express, {Request, Response} from "express";
 import 'dotenv/config'
 
-import {initChatOllama} from "./utils/ollama.js";
+import {initOllama} from "./utils/ollama.js";
 
 const app = express();
 app.use(express.json());
 
 const port = process.env.PORT;
-const chatOllama = initChatOllama()
+const ollama = initOllama()
 
 app.post('/chat', async (req: Request, res: Response) => {
     try {
-        const answer = await chatOllama.invoke(req.body.question);
-        res.json(answer);
+        const output = await ollama.invoke(req.body.question);
+        res.json(output);
     } catch (error) {
         res.status(500).json({error: (error as Error).message});
     }

@@ -1,7 +1,7 @@
-import {ChatOllama} from '@langchain/ollama';
+import {Ollama} from "@langchain/ollama";
 
-export const initChatOllama = () => {
-    return new ChatOllama({
+export const initOllama = () => {
+    return new Ollama({
         baseUrl: "http://localhost:11434",
         model: "llama3"
     });
