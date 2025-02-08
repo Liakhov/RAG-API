@@ -1,8 +1,8 @@
-import {Ollama} from "@langchain/ollama";
+import {Ollama} from '@langchain/ollama';
 
 export const initOllama = () => {
     return new Ollama({
-        baseUrl: "http://localhost:11434",
-        model: "llama3"
+        baseUrl: process.env.LLM_URL,
+        model: process.env.LLM_MODEL,
     });
-}
+};
