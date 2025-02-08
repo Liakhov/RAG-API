@@ -16,3 +16,8 @@ npm or yarn package manager
 2. Run the application:
 
   `node dist/app.js`
+
+## Inspiration
+
+- https://medium.com/@lynnthelight/building-a-rag-api-with-nodejs-b7a2016dfce9
+- https://medium.com/google-cloud/vector-databases-are-all-the-rage-872c888fa348
