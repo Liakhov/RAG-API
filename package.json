@@ -9,7 +9,10 @@
     "preview": "tsc && node dist/app.js",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "chroma:start": "docker-compose up -d",
+    "chroma:stop": "docker-compose down",
+    "chroma:restart": "docker-compose down && docker-compose up -d",
+    "chroma:logs": "docker-compose logs -f"
   },
   "keywords": [],
   "author": "",
