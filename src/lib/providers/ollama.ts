@@ -1,7 +1,7 @@
-import { Ollama } from '@langchain/ollama';
+import { Ollama, OllamaEmbeddings } from '@langchain/ollama';
 
 // Function to initialize the Ollama instance
-export const initOllama = () => {
+export const initOllama = (): Ollama => {
   // Validate required environment variables
   const llmUrl = process.env.LLM_URL;
   const llmModel = process.env.LLM_MODEL;
@@ -21,4 +21,16 @@ export const initOllama = () => {
     }
     throw new Error('Failed to initialize Ollama: Unknown error occurred');
   }
+};
+
+export const getOllamaEmbeddings = (): OllamaEmbeddings => {
+  return new OllamaEmbeddings({
+    baseUrl: process.env.LLM_URL,
+    model: 'nomic-embed-text'
+  });
+};
+
+export const embedQuery = async (query: string) => {
+  const embeddings = getOllamaEmbeddings();
+  return await embeddings.embedQuery(query);
 };

@@ -1,14 +1,15 @@
 import express, { Request, Response } from 'express';
+import type { Ollama } from '@langchain/ollama';
 import 'dotenv/config';
 
-import { initOllama } from './utils/ollama.js';
+import { initOllama } from './lib/providers/ollama.js';
 
 const app = express();
 app.use(express.json());
 
 const port = process.env.PORT;
 
-let ollama;
+let ollama: Ollama;
 try {
   ollama = initOllama();
 } catch (error) {
@@ -22,6 +23,7 @@ app.post('/chat', async (req: Request, res: Response) => {
     if (!req.body.question || typeof req.body.question !== 'string') {
       // Respond with a 400 status if validation fails
       res.status(400).json({ error: 'Invalid input: question is required and must be a string.' });
+      return;
     }
 
     // Invoke the Ollama model with the provided question
