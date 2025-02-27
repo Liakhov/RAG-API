@@ -11,13 +11,7 @@ app.use(express.json());
 
 const port = process.env.PORT;
 
-let ollama: Ollama;
-try {
-  ollama = initOllama();
-} catch (error) {
-  console.error('Failed to initialize Ollama:', error);
-  process.exit(1);
-}
+export let ollama = initOllama();
 
 app.use('/chat', chatRoutes);
 

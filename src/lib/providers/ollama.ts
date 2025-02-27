@@ -16,10 +16,8 @@ export const initOllama = (): Ollama => {
       model: llmModel
     });
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      throw new Error(`Failed to initialize Ollama: ${error.message}`);
-    }
-    throw new Error('Failed to initialize Ollama: Unknown error occurred');
+    console.error('Failed to initialize Ollama:', error);
+    process.exit(1);
   }
 };
 
@@ -33,4 +31,9 @@ export const getOllamaEmbeddings = (): OllamaEmbeddings => {
 export const embedQuery = async (query: string) => {
   const embeddings = getOllamaEmbeddings();
   return await embeddings.embedQuery(query);
+};
+
+export const embedDocuments = async (content: string[]) => {
+  const embeddings = getOllamaEmbeddings();
+  return await embeddings.embedDocuments(content);
 };
