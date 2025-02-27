@@ -28,11 +28,15 @@
     "typescript": "^5.7.3"
   },
   "dependencies": {
-    "@langchain/core": "^0.3.39",
+    "@langchain/community": "^0.3.32",
+    "@langchain/core": "^0.3.40",
     "@langchain/ollama": "^0.1.5",
     "chromadb": "^1.10.4",
+    "chromadb-default-embed": "^2.13.2",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "ollama": "^0.4.4"
+    "langchain": "^0.3.19",
+    "ollama": "^0.4.4",
+    "pdf-parse": "^1.1.1"
   }
 }
