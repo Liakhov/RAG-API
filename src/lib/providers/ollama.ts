@@ -24,7 +24,7 @@ export const initOllama = (): Ollama => {
 export const getOllamaEmbeddings = (): OllamaEmbeddings => {
   return new OllamaEmbeddings({
     baseUrl: process.env.LLM_URL,
-    model: 'nomic-embed-text'
+    model: process.env.LLM_EMBEDDINGS_MODEL
   });
 };
 
