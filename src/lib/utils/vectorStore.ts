@@ -117,3 +117,31 @@ export async function getAllRecords(
     );
   }
 }
+
+export const deleteRecordByDocumentId = async (
+  collectionName = 'documents',
+  documentId: string
+): Promise<void> => {
+  try {
+    if (!documentId) {
+      throw new Error('DocumentId is required');
+    }
+
+    // Get the collection
+    const collection = await getCollection(collectionName);
+
+    // Delete records matching the documentId
+    await collection.delete({
+      where: {
+        documentId
+      }
+    });
+
+    console.log(`Successfully deleted records for documentId "${documentId}"`);
+  } catch (error) {
+    console.error(`Failed to delete records for documentId "${documentId}":`, error);
+    throw new Error(
+      `ChromaDB deletion error: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
+  }
+};
