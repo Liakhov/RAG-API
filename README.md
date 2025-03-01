@@ -54,21 +54,21 @@ The application provides several API endpoints to interact with the LLM and docu
 
 #### Chat Endpoints
 
-- **POST **``: Chat directly with the LLM.
-- **POST **``: Chat with a specific document by its ID.
-- **POST **``: Chat with all stored documents.
+- **POST**: Chat directly with the LLM.
+- **POST**: Chat with a specific document by its ID.
+- **POST**: Chat with all stored documents.
 
 #### File Upload Endpoints
 
-- **POST **``: Upload a PDF file.
-- **POST **``: Upload a TXT file.
-- **POST **``: Upload a plain text string.
+- **POST**: Upload a PDF file.
+- **POST**: Upload a TXT file.
+- **POST**: Upload a plain text string.
 
 #### Document Management Endpoints
 
-- **GET **``: Retrieve a list of all documents.
-- **GET **``: Retrieve a specific document by its ID.
-- **DELETE **``: Delete a document by its ID.
+- **GET**: Retrieve a list of all documents.
+- **GET**: Retrieve a specific document by its ID.
+- **DELETE**: Delete a document by its ID.
 
 ### References & Inspiration
 
