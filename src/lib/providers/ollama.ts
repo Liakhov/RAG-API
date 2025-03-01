@@ -11,10 +11,11 @@ export const initOllama = (): Ollama => {
   }
 
   try {
-    return new Ollama({
+    const ollama = new Ollama({
       baseUrl: llmUrl,
       model: llmModel
     });
+    return ollama;
   } catch (error: unknown) {
     console.error('Failed to initialize Ollama:', error);
     process.exit(1);
@@ -23,7 +24,7 @@ export const initOllama = (): Ollama => {
 
 export const getOllamaEmbeddings = (): OllamaEmbeddings => {
   return new OllamaEmbeddings({
-    baseUrl: process.env.LLM_URL,
+    baseUrl: process.env.LLM_EMBEDDINGS_URL,
     model: process.env.LLM_EMBEDDINGS_MODEL
   });
 };
