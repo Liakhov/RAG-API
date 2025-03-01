@@ -1,14 +1,14 @@
 import express, { Request, Response } from 'express';
 
 import { ollama } from '../app.js';
+import { processQuestion } from '../lib/utils/chat-with-documents.js';
 
 const router = express.Router();
 
-router.post('/chat', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response) => {
   try {
     // Validate the request body
     if (!req.body.question || typeof req.body.question !== 'string') {
-      // Respond with a 400 status if validation fails
       res.status(400).json({ error: 'Invalid input: question is required and must be a string.' });
       return;
     }
@@ -19,9 +19,53 @@ router.post('/chat', async (req: Request, res: Response) => {
     // Send the model's output as the response
     res.json(output);
   } catch (error) {
-    // Log any errors that occur during processing
-    console.log('error', error);
-    // Respond with a 500 status and the error message
+    res.status(500).json({ error: (error as Error).message });
+  }
+});
+
+router.post('/documents', async (req: Request, res: Response) => {
+  try {
+    // Validate the request body
+    if (!req.body.question || typeof req.body.question !== 'string') {
+      // Respond with a 400 status if validation fails
+      res.status(400).json({ error: 'Invalid input: question is required and must be a string.' });
+      return;
+    }
+
+    const question = req.body.question;
+
+    const { llmResponse, documents } = await processQuestion(question);
+
+    res.json({
+      question,
+      llmResponse,
+      documents
+    });
+  } catch (error) {
+    res.status(500).json({ error: (error as Error).message });
+  }
+});
+
+router.post('/document/:id', async (req: Request, res: Response) => {
+  try {
+    // Validate the request body
+    if (!req.body.question || typeof req.body.question !== 'string') {
+      // Respond with a 400 status if validation fails
+      res.status(400).json({ error: 'Invalid input: question is required and must be a string.' });
+      return;
+    }
+
+    const question = req.body.question;
+    const documentId = req.body.documentId;
+
+    const { llmResponse, documents } = await processQuestion(question, { documentId });
+
+    res.json({
+      question,
+      llmResponse,
+      documents
+    });
+  } catch (error) {
     res.status(500).json({ error: (error as Error).message });
   }
 });
