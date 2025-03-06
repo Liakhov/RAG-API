@@ -15,11 +15,16 @@ router.post('/', async (req: Request, res: Response) => {
       return;
     }
 
-    // Invoke the Ollama model with the provided question
-    const output = await ollama.invoke(result.data.question);
+    const { question } = result.data;
 
-    // Send the model's output as the response
-    res.json(output);
+    res.setHeader('Content-Type', 'text/plain');
+
+    const stream = await ollama.stream(question);
+
+    for await (const chunk of stream) {
+      res.write(chunk); // Send chunks to client
+    }
+    res.end(); // Close the stream
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
   }
