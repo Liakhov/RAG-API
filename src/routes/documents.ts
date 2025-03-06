@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import { z } from 'zod';
 
 import {
   deleteRecordByDocumentId,
@@ -19,11 +20,14 @@ router.get('/', async (req: Request, res: Response) => {
 
 router.get('/:id', async (req: Request, res: Response) => {
   try {
-    const documentId = req.params.id;
-    if (!documentId) {
-      res.status(400).json({ error: 'Invalid input: id is required and must be a string.' });
+    // Validate the request body
+    const result = documentSchema.safeParse(req.params);
+    if (!result.success) {
+      res.status(400).json({ error: result.error.issues });
       return;
     }
+
+    const documentId = result.data.id;
 
     const records = await getRecordsByDocumentId('documents', documentId);
     res.json({ records });
@@ -34,17 +38,25 @@ router.get('/:id', async (req: Request, res: Response) => {
 
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
-    const documentId = req.params.id;
-    if (!documentId) {
-      res.status(400).json({ error: 'Invalid input: id is required and must be a string.' });
+    // Validate the request body
+    const result = documentSchema.safeParse(req.params);
+    if (!result.success) {
+      res.status(400).json({ error: result.error.issues });
       return;
     }
+
+    const documentId = result.data.id;
 
     await deleteRecordByDocumentId('documents', documentId);
     res.sendStatus(200);
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
   }
+});
+
+// Validation schemas
+const documentSchema = z.object({
+  id: z.string().min(1, 'documentId is required').max(36, 'documentId annot exceed 36 characters')
 });
 
 export default router;

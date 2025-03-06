@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { Document } from '@langchain/core/documents';
 import { Chroma } from '@langchain/community/vectorstores/chroma';
+import { z } from 'zod';
 
 import { getOllamaEmbeddings } from '../lib/providers/ollama.js';
 import { getRecordsByDocumentId } from '../lib/utils/vectorStore.js';
@@ -16,20 +17,15 @@ router.post(
   upload('pdf').single('file'),
   async (req: Request, res: Response): Promise<void> => {
     try {
-      const { documentId } = req.body;
-      if (!documentId || typeof documentId !== 'string') {
-        res
-          .status(400)
-          .json({ error: 'Invalid input: documentId is required and must be a string.' });
+      const result = uploadPdfSchema.safeParse({ ...req.body, file: req.file });
+      if (!result.success) {
+        res.status(400).json({ error: result.error.issues });
         return;
       }
 
-      if (!req.file) {
-        res.status(400).json({ error: 'No file uploaded or invalid file type' });
-        return;
-      }
+      const { documentId, file } = result.data;
 
-      const fileBlob = new Blob([req.file.buffer], { type: req.file.mimetype });
+      const fileBlob = new Blob([file.buffer], { type: file.mimetype });
 
       const doc = await loadPdf(fileBlob);
 
@@ -64,20 +60,15 @@ router.post(
   upload('txt').single('file'),
   async (req: Request, res: Response): Promise<void> => {
     try {
-      const { documentId } = req.body;
-      if (!documentId || typeof documentId !== 'string') {
-        res
-          .status(400)
-          .json({ error: 'Invalid input: documentId is required and must be a string.' });
+      const result = uploadTxtSchema.safeParse({ ...req.body, file: req.file });
+      if (!result.success) {
+        res.status(400).json({ error: result.error.issues });
         return;
       }
 
-      if (!req.file) {
-        res.status(400).json({ error: 'No file uploaded or invalid file type' });
-        return;
-      }
+      const { documentId, file } = result.data;
 
-      const fileBlob = new Blob([req.file.buffer], { type: req.file.mimetype });
+      const fileBlob = new Blob([file.buffer], { type: file.mimetype });
 
       const doc = await loadTxt(fileBlob);
 
@@ -109,19 +100,13 @@ router.post(
 
 router.post('/text', async (req: Request, res: Response) => {
   try {
-    const { text, documentId } = req.body;
-
-    if (!text || typeof text !== 'string') {
-      res.status(400).json({ error: 'Invalid input: question is required and must be a string.' });
+    const result = uploadTextSchema.safeParse(req.body);
+    if (!result.success) {
+      res.status(400).json({ error: result.error.issues });
       return;
     }
 
-    if (!documentId || typeof documentId !== 'string') {
-      res
-        .status(400)
-        .json({ error: 'Invalid input: documentId is required and must be a string.' });
-      return;
-    }
+    const { text, documentId } = result.data;
 
     const documents: Document[] = [{ pageContent: text, metadata: { documentId } }];
     const textChunks = await splitText(documents);
@@ -138,11 +123,40 @@ router.post('/text', async (req: Request, res: Response) => {
       records
     });
   } catch (error) {
-    // Log any errors that occur during processing
-    console.log('error', error);
-    // Respond with a 500 status and the error message
     res.status(500).json({ error: (error as Error).message });
   }
+});
+
+// Validation schemas
+const uploadTextSchema = z.object({
+  documentId: z
+    .string()
+    .min(1, 'documentId is required')
+    .max(36, 'documentId annot exceed 36 characters'),
+  text: z
+    .string()
+    .min(1, 'documentId is required')
+    .max(10000, 'documentId annot exceed 36 characters')
+});
+
+const uploadPdfSchema = z.object({
+  documentId: z
+    .string()
+    .min(1, 'documentId is required')
+    .max(36, 'documentId annot exceed 36 characters'),
+  file: z.custom<Express.Multer.File>().refine(file => file !== undefined, {
+    message: 'File is required'
+  })
+});
+
+const uploadTxtSchema = z.object({
+  documentId: z
+    .string()
+    .min(1, 'documentId is required')
+    .max(36, 'documentId annot exceed 36 characters'),
+  file: z.custom<Express.Multer.File>().refine(file => file !== undefined, {
+    message: 'File is required'
+  })
 });
 
 export default router;
