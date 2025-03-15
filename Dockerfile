@@ -19,15 +19,15 @@ RUN echo '#!/bin/sh' > /start.sh && \
     echo '  sleep 1' >> /start.sh && \
     echo 'done' >> /start.sh && \
     echo '' >> /start.sh && \
-    echo '# Pull the llama3.1 model' >> /start.sh && \
-    echo 'echo "Pulling llama3.1 model..."' >> /start.sh && \
-    echo 'ollama pull llama3.1' >> /start.sh && \
+    echo '# Pull the gemma3:4b model' >> /start.sh && \
+    echo 'echo "Pulling gemma3:4b model..."' >> /start.sh && \
+    echo 'ollama run gemma3:4b' >> /start.sh && \
     echo '' >> /start.sh && \
     echo '# Pull the nomic-embed-text model' >> /start.sh && \
     echo 'echo "Pulling nomic-embed-text model..."' >> /start.sh && \
     echo 'ollama pull nomic-embed-text' >> /start.sh && \
     echo '' >> /start.sh && \
-    echo 'echo "Ollama is ready with llama3.1 and nomic-embed-text models!"' >> /start.sh && \
+    echo 'echo "Ollama is ready with gemma3:4b and nomic-embed-text models!"' >> /start.sh && \
     echo '' >> /start.sh && \
     echo '# Wait for the server process' >> /start.sh && \
     echo 'wait $SERVER_PID' >> /start.sh
@@ -35,5 +35,5 @@ RUN echo '#!/bin/sh' > /start.sh && \
 # Make the script executable
 RUN chmod +x /start.sh
 
-# Run the script when the container starts
+# Entrypoint to run the script when the container starts
 ENTRYPOINT ["/start.sh"]
