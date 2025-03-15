@@ -8,7 +8,7 @@ This project implements a basic Retrieval-Augmented Generation (RAG) system usin
 - **TypeScript**
 - **npm** or **yarn** package manager
 - **Docker & Docker Compose** (required to run ChromaDB and Ollama)
-- **Ollama** (with at least one LLM model installed, e.g., `llama3`)
+- **Ollama** (with at least one LLM model installed, e.g., `llama3.1`, `mistral:7b`)
 - **Ollama embeddings model** (`nomic-embed-text`)
 
 ### Using Ollama and ChromaDB with Docker
