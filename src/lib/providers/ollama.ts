@@ -1,19 +1,20 @@
 import { Ollama, OllamaEmbeddings } from '@langchain/ollama';
+import { LLMModel } from '../models/llm.model.js';
 
 // Function to initialize the Ollama instance
-export const initOllama = (): Ollama => {
-  // Validate required environment variables
-  const llmUrl = process.env.LLM_URL;
-  const llmModel = process.env.LLM_MODEL;
+export const initOllama = (llmModel: LLMModel | undefined): Ollama => {
+  const baseUrl = process.env.LLM_URL;
+  const model = llmModel || process.env.LLM_MODEL;
 
-  if (!llmUrl || !llmModel) {
+  // Validate required environment variables
+  if (!baseUrl || !model) {
     throw new Error('Missing required environment variables: LLM_URL and LLM_MODEL must be set.');
   }
 
   try {
     const ollama = new Ollama({
-      baseUrl: llmUrl,
-      model: llmModel
+      baseUrl,
+      model
     });
     return ollama;
   } catch (error: unknown) {

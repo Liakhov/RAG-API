@@ -3,10 +3,10 @@ import { Chroma } from '@langchain/community/vectorstores/chroma';
 import { PromptTemplate } from '@langchain/core/prompts';
 import { StringOutputParser } from '@langchain/core/output_parsers';
 
-import { ollama } from './../../app.js';
 import { RAG_PROMPT, SIMPLIFY_QUESTION_PROMPT } from './prompt.js';
+import { LLMInstance } from '../models/llm.model.js';
 
-export const processQuestion = async (userQuestion: string, filter?: object): Promise<any> => {
+export const processQuestion = async (llm: LLMInstance, userQuestion: string, filter?: object) => {
   try {
     const ollamaEmbeddings = getOllamaEmbeddings();
     const vectorStore = await Chroma.fromExistingCollection(ollamaEmbeddings, {
@@ -21,7 +21,7 @@ export const processQuestion = async (userQuestion: string, filter?: object): Pr
 
     // Convert user question into a standalone question
     const simpleQuestionChain = PromptTemplate.fromTemplate(SIMPLIFY_QUESTION_PROMPT)
-      .pipe(ollama)
+      .pipe(llm)
       .pipe(new StringOutputParser())
       .pipe(chromaRetriever);
 
@@ -29,7 +29,7 @@ export const processQuestion = async (userQuestion: string, filter?: object): Pr
     const combinedDocs = combineDocuments(documents);
 
     // Generate answer using retrieved context
-    const answerChain = PromptTemplate.fromTemplate(RAG_PROMPT).pipe(ollama);
+    const answerChain = PromptTemplate.fromTemplate(RAG_PROMPT).pipe(llm);
 
     const llmResponse = await answerChain.invoke({ context: combinedDocs, question: userQuestion });
 

@@ -1,8 +1,8 @@
 import express, { Request, Response } from 'express';
 import { z } from 'zod';
 
-import { ollama } from '../app.js';
 import { processQuestion } from '../lib/utils/chat-with-documents.js';
+import { getLLMInstance, streamResponse } from '../lib/llm.js';
 
 const router = express.Router();
 
@@ -15,16 +15,12 @@ router.post('/', async (req: Request, res: Response) => {
       return;
     }
 
-    const { question } = result.data;
+    const { question, model } = result.data;
 
-    res.setHeader('Content-Type', 'text/plain');
+    const llm = getLLMInstance(model);
+    const stream = await llm.stream(question);
 
-    const stream = await ollama.stream(question);
-
-    for await (const chunk of stream) {
-      res.write(chunk); // Send chunks to client
-    }
-    res.end(); // Close the stream
+    await streamResponse(req, res, stream);
   } catch (error) {
     res.status(500).json({ error: (error as Error).message });
   }
@@ -38,9 +34,10 @@ router.post('/documents', async (req: Request, res: Response) => {
       return;
     }
 
-    const { question } = result.data;
+    const { question, model } = result.data;
 
-    const { llmResponse, documents } = await processQuestion(question);
+    const llm = getLLMInstance(model);
+    const { llmResponse, documents } = await processQuestion(llm, question);
 
     res.json({
       question,
@@ -63,9 +60,10 @@ router.post('/document/:id', async (req: Request, res: Response) => {
       return;
     }
 
-    const { question, documentId } = result.data;
+    const { question, documentId, model } = result.data;
 
-    const { llmResponse, documents } = await processQuestion(question, { documentId });
+    const llm = getLLMInstance(model);
+    const { llmResponse, documents } = await processQuestion(llm, question, { documentId });
 
     res.json({
       question,
@@ -82,14 +80,16 @@ const chatSchema = z.object({
   question: z
     .string()
     .min(1, 'Question is required')
-    .max(12000, 'Question cannot exceed 12,000 characters')
+    .max(12000, 'Question cannot exceed 12,000 characters'),
+  model: z.enum(['llama3.1', 'mistral:7b']).optional()
 });
 
 const documentsChatSchema = z.object({
   question: z
     .string()
     .min(1, 'Question is required')
-    .max(12000, 'Question cannot exceed 12,000 characters')
+    .max(12000, 'Question cannot exceed 12,000 characters'),
+  model: z.enum(['llama3.1', 'mistral:7b']).optional()
 });
 
 const documentChatSchema = z.object({
@@ -100,7 +100,8 @@ const documentChatSchema = z.object({
   documentId: z
     .string()
     .min(1, 'documentId is required')
-    .max(36, 'documentId annot exceed 36 characters')
+    .max(36, 'documentId annot exceed 36 characters'),
+  model: z.enum(['llama3.1', 'mistral:7b']).optional()
 });
 
 export default router;
