@@ -7,13 +7,27 @@ This project implements a basic Retrieval-Augmented Generation (RAG) system usin
 - **Node.js** (v16 or higher)
 - **TypeScript**
 - **npm** or **yarn** package manager
-- **Docker & Docker Compose** (required to run ChromaDB and Ollama)
-- **Ollama** (with at least one LLM model installed, e.g., `llama3.1`, `mistral:7b`)
-- **Ollama embeddings model** (`nomic-embed-text`)
+- **Docker & Docker Compose** (required to run ChromaDB)
+- **Ollama** installed locally
 
-### Using Ollama and ChromaDB with Docker
+### Setup
 
-Ollama and ChromaDB are both managed via Docker. Ensure Docker is running before starting the application.
+#### 1. Install Ollama
+
+First, install Ollama on your machine following the instructions at [Ollama's official website](https://ollama.com/).
+
+#### 2. Pull Required Models
+
+After installing Ollama, run these commands to pull and initialize the models:
+
+```sh
+ollama run gemma3:4b
+ollama run nomic-embed-text
+```
+
+#### 3. ChromaDB with Docker
+
+ChromaDB runs in Docker for vector storage. Ensure Docker is running before starting the application.
 
 #### Docker Commands
 
@@ -26,11 +40,11 @@ Ollama and ChromaDB are both managed via Docker. Ensure Docker is running before
 
 ### Environment Variables
 
-Before running the application, configure the necessary environment variables for Ollama in your `.env` file.
+Before running the application, configure the necessary environment variables in your `.env` file.
 
 ### Usage
 
-1. **Start Docker services (Ollama & ChromaDB)**:
+1. **Start ChromaDB**:
 
    ```sh
    yarn docker:start
@@ -76,4 +90,3 @@ The application provides several API endpoints to interact with the LLM and docu
 - [Vector Databases Overview](https://medium.com/google-cloud/vector-databases-are-all-the-rage-872c888fa348)
 - [LangChain RAG Tutorial](https://js.langchain.com/docs/tutorials/rag)
 - [LangChain QA with Chat History](https://js.langchain.com/docs/tutorials/qa_chat_history)
-
